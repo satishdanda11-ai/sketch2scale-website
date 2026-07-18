@@ -1,10 +1,11 @@
 import { useRef, useState } from "react";
 import { Link } from "react-router";
-import { motion, useInView, useScroll, useReducedMotion, AnimatePresence } from "motion/react";
+import { motion, useInView, useScroll, useReducedMotion } from "motion/react";
 import { ArrowRight } from "lucide-react";
 import { industries } from "../data/industries";
 import { articles } from "../data/insights";
 import { caseStudies } from "../data/work";
+import TransformationHero from "./TransformationHero";
 
 const EASE = [0.25, 0.1, 0.25, 1] as const;
 const DRAW_EASE = [0.65, 0, 0.35, 1] as const;
@@ -46,12 +47,6 @@ const featuredInsights = articles.filter((a) => a.featured);
 
 /* ────────────────────────────────────────────────────────────────
    MOTION PRIMITIVES
-   Two reusable signatures run through the whole page:
-   1. SplitReveal — headlines assemble themselves word by word,
-      standing in for "a sketch becoming legible."
-   2. SketchLine — a hairline that draws itself, the same literal
-      gesture as the wordmark: a line, becoming a line at scale.
-   Both respect prefers-reduced-motion.
 ──────────────────────────────────────────────────────────────── */
 
 function FadeInSection({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
@@ -161,105 +156,17 @@ export default function Home() {
 
   return (
     <div className="bg-[#f5f0e8]">
-      {/* The signature: a gold hairline that scales across the top of the
-          viewport as you move through the page — the brand's own idea,
-          made literal and load-bearing rather than decorative. */}
+      {/* Page-wide progress hairline — tracks the whole document, independent
+          of TransformationHero's own internal pinned-scroll progress. */}
       <motion.div
         className="fixed top-0 left-0 right-0 h-[2px] bg-[#b8914a] origin-left z-[60]"
         style={{ scaleX: scrollYProgress }}
       />
 
-      {/* ═══ HERO ═══ */}
-      <section className="relative min-h-screen bg-[#0d0d0d] flex flex-col justify-end overflow-hidden" aria-label="Hero">
-        {/* Oversized outline wordmark — typography as the only backdrop, no stock photography */}
-        <motion.p
-          aria-hidden="true"
-          className="absolute -bottom-[8vw] left-1/2 -translate-x-1/2 whitespace-nowrap text-[26vw] font-medium pointer-events-none select-none"
-          style={{
-            fontFamily: "var(--font-serif)",
-            letterSpacing: "-0.03em",
-            color: "transparent",
-            WebkitTextStroke: "1px rgba(245,240,232,0.07)",
-          }}
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.6, ease: EASE }}
-        >
-          Sketch
-        </motion.p>
-
-        <div className="relative z-10 max-w-[1440px] mx-auto px-6 lg:px-12 pb-20 pt-36 w-full">
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.15, ease: EASE }}
-            className="text-[11px] tracking-[0.25em] uppercase text-[#b8914a] mb-8 font-medium"
-            style={{ fontFamily: "var(--font-mono)" }}
-          >
-            Business Design Partner
-          </motion.p>
-
-          <div className="max-w-4xl">
-            <h1
-              className="text-[clamp(44px,7vw,96px)] font-medium leading-[1.05] text-[#f5f0e8] mb-1"
-              style={{ fontFamily: "var(--font-serif)", letterSpacing: "-0.02em" }}
-            >
-              <SplitReveal text="Every transformation" delay={0.3} />
-            </h1>
-            <h1
-              className="text-[clamp(44px,7vw,96px)] font-medium leading-[1.05] text-[#b8914a] italic mb-8 inline-block"
-              style={{ fontFamily: "var(--font-serif)", letterSpacing: "-0.02em" }}
-            >
-              <SplitReveal text="starts with a sketch." delay={0.62} />
-              <SketchLine className="block w-full h-[2px] mt-3" delay={1.2} duration={0.9} />
-            </h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 1.35, ease: EASE }}
-              className="text-[17px] text-[rgba(245,240,232,0.65)] leading-relaxed max-w-xl mb-12"
-            >
-              We are the partner that takes an early, unproven idea and designs the path by which it scales — combining business strategy, design, technology, and storytelling into a single discipline.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 1.5, ease: EASE }}
-              className="flex flex-wrap items-center gap-4"
-            >
-              <Link
-                to="/what-we-scale"
-                className="inline-flex items-center gap-3 text-[13px] tracking-[0.1em] uppercase font-medium text-[#f5f0e8] border border-[rgba(245,240,232,0.3)] px-6 py-3.5 hover:border-[#f5f0e8] transition-all duration-200 group"
-              >
-                See what we scale
-                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link
-                to="/work"
-                className="text-[13px] tracking-wide text-[rgba(245,240,232,0.5)] hover:text-[#b8914a] transition-colors border-b border-transparent hover:border-[#b8914a] pb-0.5"
-              >
-                View our work
-              </Link>
-            </motion.div>
-          </div>
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.7 }}
-          className="relative z-10 max-w-[1440px] mx-auto px-6 lg:px-12 pb-8"
-        >
-          <div className="flex items-center gap-3">
-            <SketchLine className="w-8 h-[1px]" delay={1.8} duration={0.5} />
-            <span className="text-[10px] tracking-[0.2em] uppercase text-[rgba(245,240,232,0.3)]" style={{ fontFamily: "var(--font-mono)" }}>
-              Scroll
-            </span>
-          </div>
-        </motion.div>
-      </section>
+      {/* ═══ HERO — pinned scroll-storytelling sequence ═══
+          Releases automatically once its 650vh container is scrolled
+          past; everything below continues in normal document flow. */}
+      <TransformationHero />
 
       {/* ═══ WHAT ARE YOU TRYING TO SCALE? ═══ */}
       <section className="py-24 lg:py-32 bg-[#f5f0e8]" aria-label="What Are You Trying To Scale?">
@@ -281,39 +188,45 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-[rgba(13,13,13,0.1)]">
             {scaleCategories.map((cat, i) => (
               <FadeInSection key={cat.label} delay={i * 0.07}>
-                <Link
-                  to={cat.href}
-                  className="block bg-[#f5f0e8] p-8 group cursor-pointer transition-colors duration-300 hover:bg-[#0d0d0d]"
-                  onMouseEnter={() => setHoveredCategory(i)}
-                  onMouseLeave={() => setHoveredCategory(null)}
-                >
-                  <div className="flex items-start justify-between mb-6">
-                    <span className={`text-[28px] transition-colors ${hoveredCategory === i ? "text-[#b8914a]" : "text-[rgba(13,13,13,0.25)]"}`}>
-                      {cat.icon}
-                    </span>
-                    <span
-                      className={`text-[10px] tracking-[0.15em] uppercase font-medium transition-colors ${
-                        hoveredCategory === i ? "text-[#b8914a]" : "text-[rgba(13,13,13,0.3)]"
-                      }`}
-                      style={{ fontFamily: "var(--font-mono)" }}
+                <motion.div whileHover={{ y: -6 }} transition={{ duration: 0.3, ease: EASE }}>
+                  <Link
+                    to={cat.href}
+                    className="block bg-[#f5f0e8] p-8 group cursor-pointer transition-colors duration-300 hover:bg-[#0d0d0d]"
+                    onMouseEnter={() => setHoveredCategory(i)}
+                    onMouseLeave={() => setHoveredCategory(null)}
+                  >
+                    <div className="flex items-start justify-between mb-6">
+                      <motion.span
+                        animate={{ rotate: hoveredCategory === i ? 12 : 0, scale: hoveredCategory === i ? 1.15 : 1 }}
+                        transition={{ duration: 0.3, ease: EASE }}
+                        className={`text-[28px] transition-colors ${hoveredCategory === i ? "text-[#b8914a]" : "text-[rgba(13,13,13,0.25)]"}`}
+                      >
+                        {cat.icon}
+                      </motion.span>
+                      <span
+                        className={`text-[10px] tracking-[0.15em] uppercase font-medium transition-colors ${
+                          hoveredCategory === i ? "text-[#b8914a]" : "text-[rgba(13,13,13,0.3)]"
+                        }`}
+                        style={{ fontFamily: "var(--font-mono)" }}
+                      >
+                        Scale →
+                      </span>
+                    </div>
+                    <h3
+                      className={`text-[20px] font-medium mb-3 transition-colors leading-tight ${hoveredCategory === i ? "text-[#f5f0e8]" : "text-[#0d0d0d]"}`}
+                      style={{ fontFamily: "var(--font-serif)" }}
                     >
-                      Scale →
-                    </span>
-                  </div>
-                  <h3
-                    className={`text-[20px] font-medium mb-3 transition-colors leading-tight ${hoveredCategory === i ? "text-[#f5f0e8]" : "text-[#0d0d0d]"}`}
-                    style={{ fontFamily: "var(--font-serif)" }}
-                  >
-                    {cat.label}
-                  </h3>
-                  <p
-                    className={`text-[13px] leading-snug transition-colors ${
-                      hoveredCategory === i ? "text-[rgba(245,240,232,0.6)]" : "text-[rgba(13,13,13,0.45)]"
-                    }`}
-                  >
-                    {cat.sub}
-                  </p>
-                </Link>
+                      {cat.label}
+                    </h3>
+                    <p
+                      className={`text-[13px] leading-snug transition-colors ${
+                        hoveredCategory === i ? "text-[rgba(245,240,232,0.6)]" : "text-[rgba(13,13,13,0.45)]"
+                      }`}
+                    >
+                      {cat.sub}
+                    </p>
+                  </Link>
+                </motion.div>
               </FadeInSection>
             ))}
           </div>
@@ -345,7 +258,11 @@ export default function Home() {
             </div>
             <div className="lg:col-span-4">
               <FadeInSection delay={0.2}>
-                <div className="border border-[rgba(245,240,232,0.1)] p-8 relative">
+                <motion.div
+                  whileHover={{ scale: 1.02, borderColor: "rgba(184,145,74,0.4)" }}
+                  transition={{ duration: 0.35, ease: EASE }}
+                  className="border border-[rgba(245,240,232,0.1)] p-8 relative"
+                >
                   <SketchLine className="absolute top-0 left-8 w-16 h-[2px] -translate-y-1/2" delay={0.6} duration={0.7} />
                   <p className="text-[12px] tracking-[0.15em] uppercase text-[#8a8070] mb-4" style={{ fontFamily: "var(--font-mono)" }}>
                     The test we apply to every decision
@@ -353,7 +270,7 @@ export default function Home() {
                   <p className="text-[15px] text-[rgba(245,240,232,0.8)] leading-relaxed italic" style={{ fontFamily: "var(--font-serif)" }}>
                     "A visitor should never conclude that Sketch2Scale makes beautiful things. A visitor should conclude that Sketch2Scale understands business."
                   </p>
-                </div>
+                </motion.div>
               </FadeInSection>
             </div>
           </div>
@@ -389,7 +306,11 @@ export default function Home() {
               <div className="space-y-px lg:pl-10">
                 {["Clarity", "Direction", "Visible Motion", "Compounding Progress"].map((item, i) => (
                   <FadeInSection key={item} delay={0.1 * i}>
-                    <div className="relative flex items-center gap-6 border border-[rgba(13,13,13,0.08)] px-8 py-6 bg-[#f5f0e8] overflow-hidden group transition-colors duration-300 hover:bg-[rgba(184,145,74,0.06)]">
+                    <motion.div
+                      whileHover={{ x: 10 }}
+                      transition={{ duration: 0.35, ease: EASE }}
+                      className="relative flex items-center gap-6 border border-[rgba(13,13,13,0.08)] px-8 py-6 bg-[#f5f0e8] overflow-hidden group cursor-default"
+                    >
                       <motion.span
                         className="absolute left-0 top-0 bottom-0 w-[3px] bg-[#b8914a] origin-top"
                         initial={{ scaleY: 0 }}
@@ -406,7 +327,7 @@ export default function Home() {
                         {item}
                       </span>
                       <span className="ml-auto text-[#b8914a] opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all">→</span>
-                    </div>
+                    </motion.div>
                   </FadeInSection>
                 ))}
               </div>
@@ -455,9 +376,17 @@ export default function Home() {
                         className="relative z-10 w-full text-left border border-[rgba(245,240,232,0.08)] bg-[#2a2826] px-8 py-6 flex items-center gap-6 hover:bg-[rgba(245,240,232,0.03)] transition-colors group"
                         aria-expanded={isOpen}
                       >
-                        <span className="text-[11px] tracking-[0.2em] text-[#b8914a] font-medium min-w-[2rem]" style={{ fontFamily: "var(--font-mono)" }}>
+                        <motion.span
+                          animate={{
+                            scale: isOpen ? 1.15 : 1,
+                            filter: isOpen ? "drop-shadow(0 0 6px rgba(184,145,74,0.7))" : "drop-shadow(0 0 0px rgba(184,145,74,0))",
+                          }}
+                          transition={{ duration: 0.3, ease: EASE }}
+                          className="text-[11px] tracking-[0.2em] text-[#b8914a] font-medium min-w-[2rem]"
+                          style={{ fontFamily: "var(--font-mono)" }}
+                        >
                           {s.stage}
-                        </span>
+                        </motion.span>
                         <span className="text-[20px] font-medium text-[#f5f0e8]" style={{ fontFamily: "var(--font-serif)" }}>
                           {s.name}
                         </span>
@@ -469,21 +398,16 @@ export default function Home() {
                           +
                         </motion.span>
                       </button>
-                      <AnimatePresence initial={false}>
-                        {isOpen && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.35, ease: EASE }}
-                            className="overflow-hidden"
-                          >
-                            <div className="px-8 py-5 pl-[4.5rem] text-[14px] text-[rgba(245,240,232,0.6)] leading-relaxed border-x border-b border-[rgba(245,240,232,0.08)]">
-                              {s.outcome}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                      <motion.div
+                        initial={false}
+                        animate={{ height: isOpen ? "auto" : 0, opacity: isOpen ? 1 : 0 }}
+                        transition={{ duration: 0.35, ease: EASE }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-8 py-5 pl-[4.5rem] text-[14px] text-[rgba(245,240,232,0.6)] leading-relaxed border-x border-b border-[rgba(245,240,232,0.08)]">
+                          {s.outcome}
+                        </div>
+                      </motion.div>
                     </div>
                   </FadeInSection>
                 );
@@ -524,7 +448,9 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-[rgba(13,13,13,0.1)]">
             {transformations.map((t, i) => (
               <FadeInSection key={i} delay={i * 0.1}>
-                <div
+                <motion.div
+                  whileHover={{ y: -8 }}
+                  transition={{ duration: 0.35, ease: EASE }}
                   className="relative bg-[#f5f0e8] group overflow-hidden cursor-pointer"
                   onMouseEnter={() => setHoveredTransformation(i)}
                   onMouseLeave={() => setHoveredTransformation(null)}
@@ -537,7 +463,7 @@ export default function Home() {
                       initial={{ scale: 1.15, opacity: 0 }}
                       whileInView={{ scale: 1, opacity: 1 }}
                       viewport={{ once: true, margin: "-60px" }}
-                      whileHover={{ scale: 1.05 }}
+                      whileHover={{ scale: 1.08 }}
                       transition={{ duration: 1, ease: EASE }}
                     />
                     <div className="absolute inset-0 bg-[#0d0d0d]/40 group-hover:bg-[#0d0d0d]/20 transition-colors duration-300" />
@@ -562,7 +488,7 @@ export default function Home() {
                       Read the transformation <ArrowRight size={11} />
                     </Link>
                   </div>
-                </div>
+                </motion.div>
               </FadeInSection>
             ))}
           </div>
@@ -598,21 +524,23 @@ export default function Home() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-px bg-[rgba(13,13,13,0.08)]">
             {industriesGrid.map((ind, i) => (
               <FadeInSection key={ind.slug} delay={i * 0.04}>
-                <Link to={`/industries/${ind.slug}`} className="relative block bg-[#ece6d8] px-6 py-5 group overflow-hidden">
-                  <p
-                    className="text-[15px] font-medium text-[#0d0d0d] group-hover:text-[#b8914a] transition-colors"
-                    style={{ fontFamily: "var(--font-serif)" }}
-                  >
-                    {ind.label}
-                  </p>
-                  <p
-                    className="text-[10px] tracking-[0.15em] uppercase mt-1 text-[#8a8070] group-hover:text-[#b8914a] transition-colors"
-                    style={{ fontFamily: "var(--font-mono)" }}
-                  >
-                    {ind.cluster}
-                  </p>
-                  <span className="absolute left-0 bottom-0 h-[2px] bg-[#b8914a] w-0 group-hover:w-full transition-all duration-300 ease-out" />
-                </Link>
+                <motion.div whileHover={{ y: -3 }} transition={{ duration: 0.25, ease: EASE }}>
+                  <Link to={`/industries/${ind.slug}`} className="relative block bg-[#ece6d8] px-6 py-5 group overflow-hidden">
+                    <p
+                      className="text-[15px] font-medium text-[#0d0d0d] group-hover:text-[#b8914a] transition-colors"
+                      style={{ fontFamily: "var(--font-serif)" }}
+                    >
+                      {ind.label}
+                    </p>
+                    <p
+                      className="text-[10px] tracking-[0.15em] uppercase mt-1 text-[#8a8070] group-hover:text-[#b8914a] transition-colors"
+                      style={{ fontFamily: "var(--font-mono)" }}
+                    >
+                      {ind.cluster}
+                    </p>
+                    <span className="absolute left-0 bottom-0 h-[2px] bg-[#b8914a] w-0 group-hover:w-full transition-all duration-300 ease-out" />
+                  </Link>
+                </motion.div>
               </FadeInSection>
             ))}
           </div>
@@ -650,34 +578,36 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {featuredInsights.map((item, i) => (
               <FadeInSection key={i} delay={i * 0.1}>
-                <Link to="/insights" className="block group">
-                  <div className="relative h-48 overflow-hidden bg-[#2a2826] mb-5">
-                    <motion.img
-                      src={item.img}
-                      alt={item.title}
-                      className="w-full h-full object-cover opacity-70 group-hover:opacity-90 group-hover:scale-105 transition-all duration-500"
-                      initial={{ clipPath: "inset(0 0 100% 0)" }}
-                      whileInView={{ clipPath: "inset(0 0 0% 0)" }}
-                      viewport={{ once: true, margin: "-60px" }}
-                      transition={{ duration: 0.9, ease: DRAW_EASE }}
-                    />
-                  </div>
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="text-[10px] tracking-[0.2em] uppercase text-[#b8914a] font-medium" style={{ fontFamily: "var(--font-mono)" }}>
-                      {item.tag}
-                    </span>
-                    <span className="w-1 h-1 rounded-full bg-[#c4bdb0]" />
-                    <span className="text-[11px] text-[#8a8070]" style={{ fontFamily: "var(--font-mono)" }}>
-                      {item.reading}
-                    </span>
-                  </div>
-                  <h3
-                    className="text-[16px] font-medium text-[#0d0d0d] leading-snug group-hover:text-[#b8914a] transition-colors"
-                    style={{ fontFamily: "var(--font-serif)" }}
-                  >
-                    {item.title}
-                  </h3>
-                </Link>
+                <motion.div whileHover={{ y: -6 }} transition={{ duration: 0.3, ease: EASE }}>
+                  <Link to="/insights" className="block group">
+                    <div className="relative h-48 overflow-hidden bg-[#2a2826] mb-5">
+                      <motion.img
+                        src={item.img}
+                        alt={item.title}
+                        className="w-full h-full object-cover opacity-70 group-hover:opacity-90 group-hover:scale-105 transition-all duration-500"
+                        initial={{ clipPath: "inset(0 0 100% 0)" }}
+                        whileInView={{ clipPath: "inset(0 0 0% 0)" }}
+                        viewport={{ once: true, margin: "-60px" }}
+                        transition={{ duration: 0.9, ease: DRAW_EASE }}
+                      />
+                    </div>
+                    <div className="flex items-center gap-3 mb-3">
+                      <span className="text-[10px] tracking-[0.2em] uppercase text-[#b8914a] font-medium" style={{ fontFamily: "var(--font-mono)" }}>
+                        {item.tag}
+                      </span>
+                      <span className="w-1 h-1 rounded-full bg-[#c4bdb0]" />
+                      <span className="text-[11px] text-[#8a8070]" style={{ fontFamily: "var(--font-mono)" }}>
+                        {item.reading}
+                      </span>
+                    </div>
+                    <h3
+                      className="text-[16px] font-medium text-[#0d0d0d] leading-snug group-hover:text-[#b8914a] transition-colors"
+                      style={{ fontFamily: "var(--font-serif)" }}
+                    >
+                      {item.title}
+                    </h3>
+                  </Link>
+                </motion.div>
               </FadeInSection>
             ))}
           </div>
@@ -703,16 +633,23 @@ export default function Home() {
             <p className="text-[17px] text-[rgba(245,240,232,0.55)] leading-relaxed max-w-md mx-auto mb-12">
               A Discovery Workshop is a structured, single-session conversation — not a sales call. Begin there.
             </p>
-            <Link
-              to="/discovery-workshop"
-              className="inline-flex items-center gap-3 bg-[#b8914a] text-[#f5f0e8] text-[13px] tracking-[0.12em] uppercase font-medium px-8 py-4 hover:bg-[#d4a85a] transition-colors group"
-            >
-              Book a Discovery Workshop
-              <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-            </Link>
+            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.98 }} transition={{ duration: 0.2, ease: EASE }} className="inline-block">
+              <Link
+                to="/discovery-workshop"
+                className="inline-flex items-center gap-3 bg-[#b8914a] text-[#f5f0e8] text-[13px] tracking-[0.12em] uppercase font-medium px-8 py-4 hover:bg-[#d4a85a] transition-colors group"
+              >
+                Book a Discovery Workshop
+                <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </motion.div>
           </FadeInSection>
         </div>
       </section>
+
+      {/* ═══ FOOTER ═══
+          Not included: the footer wasn't part of the code you shared with
+          me (it's presumably its own component rendered by your layout,
+          outside Home.tsx). Paste it in and I'll add matching motion to it. */}
     </div>
   );
 }
